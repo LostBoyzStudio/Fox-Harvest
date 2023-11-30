@@ -8,12 +8,8 @@ public class PlayerMovementSystem : PlayerSystem
 {
     public float Velocity = 1;
 
-    [SerializeField]
-    private Transform _wallChecker;
-    [SerializeField]
-    private float _checkerRadius;
-    [SerializeField]
-    private LayerMask _checkerLayer;
+    [SerializeField] private Transform _wallChecker;
+    [SerializeField] private float _checkerRadius;
 
     private Rigidbody _rigidbody;
     private Vector3 _axis;
@@ -25,24 +21,18 @@ public class PlayerMovementSystem : PlayerSystem
 
     private void Update()
     {
-        if (Input.anyKey)
+        if (Enabled)
         {
             UpdateAxis();
-
-            if (Enabled)
-            {
-                UpdatePosition();
-                UpdateRotation(); // TODO: make work with Quaternion Lerp
-            }
         }
     }
 
-    private void OnDrawGizmos()
+    void LateUpdate()
     {
-        Gizmos.color = Color.green;
-        if (_wallChecker != null)
+        if (Enabled)
         {
-            Gizmos.DrawWireSphere(_wallChecker.position, _checkerRadius);
+            UpdatePosition();
+            UpdateRotation();
         }
     }
 
@@ -56,18 +46,31 @@ public class PlayerMovementSystem : PlayerSystem
 
     private void UpdatePosition()
     {
-        if (Physics.OverlapSphere(_wallChecker.position, _checkerRadius, _checkerLayer).Length == 0)
+        // foreach(var v in Physics.OverlapSphere(_wallChecker.position, _checkerRadius))
+        // {
+        //     Debug.Log(v.name);
+        // }
+        if (Physics.OverlapSphere(_wallChecker.position, _checkerRadius).Length == 0)
         {
-            Vector3 direction = _axis.normalized * Velocity * Time.deltaTime;
-            this.transform.position += direction;
+            this.transform.position += Velocity * Time.deltaTime * _axis.normalized;
         }
     }
 
     private void UpdateRotation()
     {
+        // TODO: make work with Quaternion Lerp
         if (_axis.x != 0 || _axis.z != 0)
         {
             this.transform.LookAt(_axis + this.transform.position);
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        if (_wallChecker != null)
+        {
+            Gizmos.DrawWireSphere(_wallChecker.position, _checkerRadius);
         }
     }
 }
