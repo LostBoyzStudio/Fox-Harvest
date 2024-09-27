@@ -2,20 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateMachine<T> where T: System.Enum
+public class StateMachine
 {
-    State<T> currentState;
+    State _currentState;
 
-    Dictionary<T, State<T>> states;
-    public StateMachine(List<State<T>> states) {
-        this.states = new Dictionary<T, State<T>>();
-        foreach (State<T> state in states)
+    Dictionary<ECustomerState, State> _states;
+
+    public StateMachine(List<State> states) {
+        this._states = new Dictionary<ECustomerState, State>();
+        foreach (State state in states)
         {
-            this.states.Add(state.EState, state);
+            // Debug.Log($"Adding { state }");
+            this._states.Add(state.Type, state);
         }
     }
 
     public void Execute() {
-        currentState.Execute();
+        _currentState?.Update(this);
+    }
+
+    public void ChangeState(State newState)
+    {
+        if (_currentState != null)
+        {
+            _currentState.Exit(this);
+        }
+
+        _currentState = newState;
+        _currentState.Enter(this);
     }
 }

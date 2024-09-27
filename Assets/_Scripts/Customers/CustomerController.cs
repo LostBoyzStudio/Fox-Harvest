@@ -6,35 +6,37 @@ public enum ECustomerState { Entering, Waiting, Attending, Exiting };
 
 public class CustomerController : MonoBehaviour
 {
-    public ECustomerState state;
+    public ECustomerState currentState;
     
     public delegate void OnChangeState(ECustomerState state);
     public OnChangeState onChangeState;
 
-    StateMachine<ECustomerState> stateMachine;
+    StateMachine stateMachine;
 
     // Start is called before the first frame update
     void Start()
     {
-        state = ECustomerState.Entering;
-        List<State<ECustomerState>> states = new List<State<ECustomerState>>();
+        currentState = ECustomerState.Entering;
+        List<State> states = new List<State>();
+        // TODO: refazer as funções construtoras de cada elemento
         states.Add(new CustomerWaiting());
         states.Add(new CustomerExiting());
         states.Add(new CustomerEntering());
         states.Add(new CustomerAttending());
             
-        stateMachine = new StateMachine<ECustomerState>(states);
+        stateMachine = new StateMachine(states);
+        ChangeState(currentState);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        stateMachine.Execute();
     }
 
     void ChangeState(ECustomerState state) {
-        this.state = state;
+        this.currentState = state;
         // stateMachine.
-        onChangeState?.Invoke(this.state);
+        onChangeState?.Invoke(this.currentState);
     }
 }

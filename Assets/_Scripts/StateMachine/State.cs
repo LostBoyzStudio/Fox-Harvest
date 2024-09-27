@@ -1,4 +1,6 @@
-public abstract class State<T> where T: System.Enum {
-    public T EState { get; private set; }
-    public abstract void Execute();
+public abstract class State {
+    public abstract ECustomerState Type { get; }
+    public abstract void Enter(StateMachine stateMachine);
+    public abstract void Update(StateMachine stateMachine);
+    public abstract void Exit(StateMachine stateMachine);
 }
