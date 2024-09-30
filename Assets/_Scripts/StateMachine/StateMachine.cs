@@ -4,11 +4,19 @@ using UnityEngine;
 
 public class StateMachine
 {
+    #region Callbacks
+    public delegate void OnChangeState(ECustomerState state);
+    public OnChangeState onChangeState;
+    #endregion
+
     State _currentState;
 
     Dictionary<ECustomerState, State> _states;
 
-    public StateMachine(List<State> states) {
+    public Transform Transform { get; private set; }
+
+    public StateMachine(Transform transform, List<State> states) {
+        this.Transform = transform;
         this._states = new Dictionary<ECustomerState, State>();
         foreach (State state in states)
         {
@@ -21,14 +29,16 @@ public class StateMachine
         _currentState?.Update(this);
     }
 
-    public void ChangeState(State newState)
+    public void ChangeState(ECustomerState newState)
     {
         if (_currentState != null)
         {
             _currentState.Exit(this);
         }
 
-        _currentState = newState;
+        _currentState = _states[newState];
         _currentState.Enter(this);
+        
+        onChangeState?.Invoke(newState);
     }
 }

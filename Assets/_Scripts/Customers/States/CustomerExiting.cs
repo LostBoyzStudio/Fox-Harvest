@@ -6,16 +6,16 @@ public class CustomerExiting: State {
 
     public override void Enter(StateMachine stateMachine)
     {
-        Debug.Log("Entrando no estado CustomerExiting.");
+        // Debug.Log("Entrando no estado CustomerExiting.");
     }
 
     public override void Update(StateMachine stateMachine)
     {
-        Debug.Log("Atualizando o estado CustomerExiting.");
+        // Debug.Log("Atualizando o estado CustomerExiting.");
     }
 
     public override void Exit(StateMachine stateMachine)
     {
-        Debug.Log("Saindo do estado CustomerExiting.");
+        // Debug.Log("Saindo do estado CustomerExiting.");
     }
 }

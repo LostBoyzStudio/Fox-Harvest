@@ -2,30 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ECustomerState { Entering, Waiting, Attending, Exiting };
+public enum ECustomerState { Entering, Waiting, Attending, Exiting, Paying, Walking };
 
 public class CustomerController : MonoBehaviour
 {
-    public ECustomerState currentState;
-    
-    public delegate void OnChangeState(ECustomerState state);
-    public OnChangeState onChangeState;
+    public ECustomerState CurrentState { get; private set; }
 
     StateMachine stateMachine;
 
     // Start is called before the first frame update
     void Start()
     {
-        currentState = ECustomerState.Entering;
+        this.CurrentState = ECustomerState.Entering;
         List<State> states = new List<State>();
+
         // TODO: refazer as funções construtoras de cada elemento
-        states.Add(new CustomerWaiting());
-        states.Add(new CustomerExiting());
-        states.Add(new CustomerEntering());
         states.Add(new CustomerAttending());
+        states.Add(new CustomerEntering());
+        states.Add(new CustomerExiting());
+        states.Add(new CustomerWaiting());
+        states.Add(new CustomerPaying());
+        states.Add(new CustomerWalking());
             
-        stateMachine = new StateMachine(states);
-        ChangeState(currentState);
+        stateMachine = new StateMachine(this.transform, states);
+        stateMachine.ChangeState(this.CurrentState);
+
+        stateMachine.onChangeState += OnChangeState;
     }
 
     // Update is called once per frame
@@ -34,9 +36,13 @@ public class CustomerController : MonoBehaviour
         stateMachine.Execute();
     }
 
-    void ChangeState(ECustomerState state) {
-        this.currentState = state;
-        // stateMachine.
-        onChangeState?.Invoke(this.currentState);
+    void OnChangeState(ECustomerState newState)
+    {
+        this.CurrentState = newState;
+    }
+
+    void OnDestroy()
+    {
+        stateMachine.onChangeState -= OnChangeState;
     }
 }

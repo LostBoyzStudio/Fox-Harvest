@@ -8,20 +8,14 @@ public class CustomerMovement : MonoBehaviour
 {
     NavMeshAgent agent;
 
-    // Start is called before the first frame update
-    void Start()
+    // Awake is called when the game object is created
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void MoveTo(Vector3 pos)
     {
-        // Debug.Log("TODO");
+        agent.SetDestination(pos);
     }
 }
