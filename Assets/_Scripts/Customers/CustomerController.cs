@@ -8,6 +8,8 @@ public class CustomerController : MonoBehaviour
 {
     public ECustomerState CurrentState { get; private set; }
 
+    public int QueuePosition { get; private set; }
+
     StateMachine stateMachine;
 
     // Start is called before the first frame update
@@ -20,7 +22,7 @@ public class CustomerController : MonoBehaviour
         states.Add(new CustomerAttending());
         states.Add(new CustomerEntering());
         states.Add(new CustomerExiting());
-        states.Add(new CustomerWaiting());
+        states.Add(new CustomerWaiting(6f));
         states.Add(new CustomerPaying());
         states.Add(new CustomerWalking());
             
@@ -34,6 +36,16 @@ public class CustomerController : MonoBehaviour
     void Update()
     {
         stateMachine.Execute();
+    }
+
+    public void SetCurrentQueuePosition(int queuePos)
+    {
+        QueuePosition = queuePos;
+    }
+
+    public void RecieveOrder()
+    {
+        stateMachine.ChangeState(ECustomerState.Paying);
     }
 
     void OnChangeState(ECustomerState newState)
